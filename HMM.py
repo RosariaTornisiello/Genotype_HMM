@@ -9,6 +9,9 @@ import pickle
 from tqdm import tqdm
 from random import sample
 from hmmlearn.hmm import CategoricalHMM
+import csv
+from natsort import natsorted
+from functools import reduce
 
 sns.set_style("white")
 sc.settings.verbosity = 3
@@ -255,14 +258,17 @@ def hmm_train(rep_chr_ratio_dict, chromosomes):
     model.fit(X, lengths)
     return model
 
-def hmm_decode(model, rep_chr_ratio_dict, chromosomes, sample_name, out_path):
+def hmm_decode(model, rep_chr_ratio_dict, chromosomes, sample_name, simple_gtf_path, out_path):
 
     """Decode the sequence of states for each chromosome in each replicate
     using the trained HMM model."""
 
+    allRep_list = list() # list of dataframes containing all genes decoded states for all replicates
     reps = list(rep_chr_ratio_dict.keys())
     for i in reps:
-        print(f"Plotting decoded sequence per chromosome for {i}...")
+        print(f"Decoding sequence per chromosome for {i}...")
+
+        allChrom_list = list()
 
         fig = plt.figure(figsize=(30, 30))
         gs = fig.add_gridspec(19, hspace=1)
@@ -270,23 +276,67 @@ def hmm_decode(model, rep_chr_ratio_dict, chromosomes, sample_name, out_path):
         fig.suptitle(f'HMM predicted haplotype for all chromosomes of {i}', fontsize=30)
         n = 0
         for chro in chromosomes:
-            df = pd.DataFrame(
+            df_ratio = pd.DataFrame(
                 rep_chr_ratio_dict[i][chro].mean(axis=0), 
                 columns=['Ratio']).reset_index().rename(columns={"index":"Gene"})
 
-            df = ratio2int(df)
+            df_ratio = ratio2int(df_ratio)
 
-            X = df.obs_state_pro.to_numpy()
+            X = df_ratio.obs_state_pro.to_numpy()
             X = X.reshape(-1, 1)
             X = X.astype(int)
 
             proba, state_sequence = model.decode(X)
 
-            df = pd.DataFrame(state_sequence)
-            sns.heatmap(df.T, ax=ax[n], xticklabels=False, yticklabels=False, cmap="copper_r", vmin=0, vmax=1, linewidths=0, rasterized=True)
+            df_decoded = pd.DataFrame(state_sequence)
+            sns.heatmap(df_decoded.T, ax=ax[n], xticklabels=False, yticklabels=False, cmap="copper_r", vmin=0, vmax=1, linewidths=0, rasterized=True)
+            
+            # Prepare output dataframe containg gene names, ratio, observed state and emitted state (per rep)
+            df_comb = pd.concat([df_ratio, df_decoded], axis=1, ignore_index=True)
+            df_comb.columns = ['Gene', 'Ratio', 'Observed_State', 'Emitted_state']
+            df_comb.insert(0, 'Chr', chro)
+            allChrom_list.append(df_comb)
+
+            # Add this replicate dataframe to the list of all replicates
+            df_rep = df_comb[['Gene', 'Emitted_state']].rename(columns={'Emitted_state': i})
+            allRep_list.append(df_rep)
+
+            # Prepare output dataframe containing coordinates of the segments (per rep)
+            with open(simple_gtf_path) as gtf:
+                reader = csv.reader(gtf, delimiter=',')
+                filtered_rows = list()
+                for row in tqdm(reader):
+                    if row[5] in df_comb['Gene'].values:
+                        filtered_rows.append(row)
+            ref_df = pd.DataFrame(filtered_rows)
+            ref_df.columns =['Chr', 'Type', 'Start', 'End', 'Gene_type', 'Gene']
+
+            seg_df = pd.merge(df_comb[['Chr', 'Gene', 'Emitted_state']], ref_df[['Chr', 'Start', 'End', 'Gene']], on=['Chr', 'Gene'], how='inner')
+
+            seg_df['Block'] = (seg_df['Emitted_state'] != seg_df['Emitted_state'].shift()) | (seg_df['Chr'] != seg_df['Chr'].shift())
+
+            # Use cumsum to create a unique block ID for each contiguous block
+            seg_df['Block_id'] = seg_df['Block'].cumsum()
+
+            block_df = seg_df.groupby(['Chr', 'Emitted_state', 'Block_id']).agg({
+                'Start': 'first',
+                'End': 'last'
+            }).reset_index()
+
+            block_df = block_df.drop(columns=['Block_id'])
+            sorted_indexes = natsorted(block_df.index, key=lambda i: block_df.loc[i, 'Chr'])
+            block_df = block_df.loc[sorted_indexes].reset_index(drop=True)
 
             n += 1
+
+        Chrom_df = pd.concat(allChrom_list, axis=0, ignore_index=True)
+        Chrom_df.to_csv(f"{out_path}/{sample_name}_decoded_{i}.csv", index=False, sep='\t')
+        block_df.to_csv(f"{out_path}/{sample_name}_decoded_segments_{i}.bed", index=False, sep='\t')        
         plt.savefig(f"{out_path}/{sample_name}_chr_heatmaps_{i}_decoded.pdf")
+    
+    # Save all replicates dataframe containing all genes and their decoded states
+    allRep_df = reduce(lambda left, right: pd.merge(left, right, on='Gene', how='outer'), allRep_list)
+    allRep_df.to_csv(f"{out_path}/{sample_name}_decoded_all_reps.csv", index=False, sep='\t')
 
 
 def main():
