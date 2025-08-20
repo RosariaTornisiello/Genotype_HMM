@@ -1,4 +1,4 @@
-Chr	Gene	Ratio	Observed_State	Emitted_state
+Chr	Gene	Ratio	observed_State	hidden_state
 chr1	Mrpl15	0.12931034482758622	0.0	0
 chr1	Lypla1	0.45	0.0	0
 chr1	Atp6v1h	0.5392156862745098	1.0	0

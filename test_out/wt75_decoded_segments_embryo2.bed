@@ -1,4 +1,4 @@
-Chr	Emitted_state	Start	End
+Chr	hidden_state	Start	End
 chr1	0	4773206	195131586
 chr2	0	106962527	181870830
 chr2	1	3284212	106868356
