@@ -292,9 +292,9 @@ def hmm_decode(model, rep_chr_ratio_dict, chromosomes, sample_name, simple_gtf_p
             df_decoded = pd.DataFrame(state_sequence)
             sns.heatmap(df_decoded.T, ax=ax[n], xticklabels=False, yticklabels=False, cmap="copper_r", vmin=0, vmax=1, linewidths=0, rasterized=True)
             
-            # Prepare output dataframe containg gene names, ratio, observed state and emitted state (per rep)
+            # Prepare output dataframe containg gene names, ratio, observed state and hidden state (per rep)
             df_comb = pd.concat([df_ratio, df_decoded], axis=1, ignore_index=True)
-            df_comb.columns = ['Gene', 'Ratio', 'Observed_State', 'Emitted_state']
+            df_comb.columns = ['Gene', 'Ratio', 'observed_State', 'hidden_state']
             df_comb.insert(0, 'Chr', chro)
             allChrom_list.append(df_comb)
 
@@ -308,14 +308,14 @@ def hmm_decode(model, rep_chr_ratio_dict, chromosomes, sample_name, simple_gtf_p
         chrom_df = pd.concat(allChrom_list, axis=0, ignore_index=True)
 
         # plot the distribution of predicted states per chromosome
-        g = sns.displot(data=chrom_df, x='Emitted_state', col="Chr", col_wrap=4, height=3, aspect=1)
+        g = sns.displot(data=chrom_df, x='hidden_state', col="Chr", col_wrap=4, height=3, aspect=1)
         g.set_axis_labels("Predicted state", "Density")
         g.set_titles("{col_name}")
         plt.savefig(f"{out_path}/{sample_name}_predstate_distribution_per_chr_{i}.pdf")
         plt.close()
 
         # Add this replicate dataframe to the list of all replicates
-        df_rep = chrom_df[['Gene', 'Emitted_state']].rename(columns={'Emitted_state': i})
+        df_rep = chrom_df[['Gene', 'hidden_state']].rename(columns={'hidden_state': i})
         allRep_list.append(df_rep)
 
         # Prepare output dataframe containing coordinates of the segments (per rep)
@@ -328,11 +328,11 @@ def hmm_decode(model, rep_chr_ratio_dict, chromosomes, sample_name, simple_gtf_p
         ref_df = pd.DataFrame(filtered_rows)
         ref_df.columns = ['Chr', 'Type', 'Start', 'End', 'Gene_type', 'Gene']
         
-        seg_df = pd.merge(chrom_df[['Chr', 'Gene', 'Emitted_state']], ref_df[['Chr', 'Start', 'End', 'Gene']], on=['Chr', 'Gene'], how='inner')
-        seg_df['Block'] = (seg_df['Emitted_state'] != seg_df['Emitted_state'].shift()) | (seg_df['Chr'] != seg_df['Chr'].shift())
+        seg_df = pd.merge(chrom_df[['Chr', 'Gene', 'hidden_state']], ref_df[['Chr', 'Start', 'End', 'Gene']], on=['Chr', 'Gene'], how='inner')
+        seg_df['Block'] = (seg_df['hidden_state'] != seg_df['hidden_state'].shift()) | (seg_df['Chr'] != seg_df['Chr'].shift())
         seg_df['Block_id'] = seg_df['Block'].cumsum()
 
-        block_df = seg_df.groupby(['Chr', 'Emitted_state', 'Block_id']).agg({
+        block_df = seg_df.groupby(['Chr', 'hidden_state', 'Block_id']).agg({
             'Start': 'first',
             'End': 'last'
         }).reset_index()
