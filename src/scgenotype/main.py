@@ -1,18 +1,5 @@
-import scanpy as sc
-import pandas as pd
-import numpy as np
-import csv
-import seaborn as sns
-import matplotlib.pyplot as plt
 import argparse
-from tqdm import tqdm
-from random import sample
-from hmmlearn.hmm import CategoricalHMM
-from natsort import natsorted
-from functools import reduce
 
-sns.set_style("white")
-sc.settings.verbosity = 3
 
 def get_chr_list():
 
@@ -350,17 +337,32 @@ def hmm_decode(model, rep_chr_ratio_dict, chromosomes, sample_name, simple_gtf_p
 
 
 def main():
+    import scanpy as sc
+    import pandas as pd
+    import numpy as np
+    import csv
+    import seaborn as sns
+    import matplotlib.pyplot as plt
+    from tqdm import tqdm
+    from random import sample
+    from hmmlearn.hmm import CategoricalHMM
+    from natsort import natsorted
+    from functools import reduce
+
+    sns.set_style("white")
+    sc.settings.verbosity = 3
 
     parser = argparse.ArgumentParser(description="This scripts determines the haplotype of all genes, by replicate.")
     parser.add_argument("-s", "--sample", type=str, help="Name of the sample (e.g. wt85, Dnmt1...)")
+    parser.add_argument("-gtf", "--gtf", help="Path to a simplified gtf file")
+    parser.add_argument("-imp", "--imprinted_genes", help="Path to a csv file containing imprinted genes")
     parser.add_argument("-a", "--aggr", help="Path to filtered and annotated feature barcode matrix h5")
     parser.add_argument("-rep", "--replicate", type=str, help="Name of the replicate column (e.g. embryo)")
     parser.add_argument("-G1", "--G1_matrix", help="Path to G1 (B6) filtered and annotated feature barcode matrix h5")
     parser.add_argument("-G2", "--G2_matrix", help="Path to G2 (CAST) filtered and annotated feature barcode matrix h5")
-    parser.add_argument("-o", "--out_plots", help="Path of directory were to print plots")
+    parser.add_argument("-o", "--out_plots", help="Path of directory were to save plots and output files")
     args = parser.parse_args()
 
-    simple_gtf_path = "/project/MTase/data/reference/gencode.vM10.annotation.simple.csv"
     imp_genes_csv_path = '/project/MTase/data/mm10_imprinted_genes.csv'
 
     print("Loading feature barcode matrixes into scanpy objects...")
@@ -375,14 +377,14 @@ def main():
         sample_dict[key].var_names_make_unique()
 
     chromosomes = get_chr_list()
-    chr_genes_dict = get_chrom_genes_dict(chromosomes, sample_dict['aggr'], simple_gtf_path)
-    filter_G1_G2(sample_dict, imp_genes_csv_path)
+    chr_genes_dict = get_chrom_genes_dict(chromosomes, sample_dict['aggr'], args.gtf)
+    filter_G1_G2(sample_dict, args.imprinted_genes)
     reps, sample_rep_dict = split_by_rep(sample_dict, args.replicate)
     filter_rep(reps, sample_rep_dict)
     rep_chr_ratio_dict = compute_ratio(reps, chromosomes, sample_rep_dict, chr_genes_dict)
     plot_ratio_dist(reps, chromosomes, rep_chr_ratio_dict, args.sample, args.out_plots)
     model = hmm_train(rep_chr_ratio_dict, chromosomes)
-    hmm_decode(model, rep_chr_ratio_dict, chromosomes, args.sample, simple_gtf_path, args.out_plots)
+    hmm_decode(model, rep_chr_ratio_dict, chromosomes, args.sample, args.gtf, args.out_plots)
     print("HMM model trained and decoded sequences plotted!")
     print(f"Finished processing {args.sample}!")
 
