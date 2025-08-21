@@ -5,11 +5,9 @@ import csv
 import seaborn as sns
 import matplotlib.pyplot as plt
 import argparse
-import pickle
 from tqdm import tqdm
 from random import sample
 from hmmlearn.hmm import CategoricalHMM
-import csv
 from natsort import natsorted
 from functools import reduce
 
