@@ -69,3 +69,34 @@ gzip sample1_G2/*.fastq
 
 - Run cell ranger aggregate separately for G1 and G2 if needed
 
+We can now install scGenotype via pip:
+```
+pip install scGenotype
+```
+After installation we can look at the help page and learn about input and output files:
+```
+scGenotype --help
+```
+Now we can run scGenotype!
+These are the inputs the program needs:
+- aggregated feature barcode matrix, already filtered after standard scRNA-seq QC
+- G1 feature barcode matrix
+- G2 feature barcode matrix
+- simplified gtf (csv) file of the specie we are interestes in, e.g.:
+```
+chr1,gene,3073253,3074322,"TEC","4933401J01Rik"
+chr1,gene,3102016,3102125,"snRNA","Gm26206"
+chr1,gene,3205901,3671498,"protein_coding","Xkr4"
+chr1,gene,3252757,3253236,"processed_pseudogene","Gm18956"
+...
+```
+This file for mm10 is located in the metadata folder.
+- known imprinted genes list of the specie we are interested in. An example of this file for mm10 is located in the metadata folder.
+
+scGenotype will output the following files:
+- one dataframe containing for all the replicates per sample (columns), and for all genes (rows), 0 or 1 which indicates the genotype state. In the example reported here: 0 = mixed genotype, 1 = not mixed genotype (*_allreps.csv)
+- one dataframe per replicate having these columns:
+```
+chr	gene	ratio	observed_state	hidden_state
+```
+- one bed file per replicate indicating the chromosomal segments having a continuous genotype state
