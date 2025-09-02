@@ -95,6 +95,11 @@ This file for mm10 is located in the metadata folder.
 An example of this file for mm10 is located in the metadata folder.
 - the numbers of replicates and chromosomes you want to use to train the model
 
+Example run:
+```
+scGeno -s WT_mm10 -gtf mm10.simple.gtf -imp mm10_imprinted_genes.csv -rep embryo -a WT_aggr.h5 -G1 WT_G1.h5ad -G2 WT_G2.h5ad -r 8 -c 9 -o out_path 
+```
+
 scGeno will output the following files:
 - one dataframe containing for all the replicates per sample (columns), and for all genes (rows), 0 or 1 which indicates the genotype state. In the example reported here: 0 = mixed genotype, 1 = not mixed genotype (*_allreps.csv)
 - one dataframe per replicate having these columns:
