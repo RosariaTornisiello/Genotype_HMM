@@ -365,8 +365,6 @@ def main():
     parser.add_argument("-o", "--out_plots", help="Path of directory were to save plots and output files")
     args = parser.parse_args()
 
-    imp_genes_csv_path = '/project/MTase/data/mm10_imprinted_genes.csv'
-
     print("Loading feature barcode matrixes into scanpy objects...")
 
     sample_dict = dict()
