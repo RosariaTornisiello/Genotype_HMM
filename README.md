@@ -91,7 +91,9 @@ chr1,gene,3252757,3253236,"processed_pseudogene","Gm18956"
 ...
 ```
 This file for mm10 is located in the metadata folder.
-- known imprinted genes list of the specie we are interested in. An example of this file for mm10 is located in the metadata folder.
+- known imprinted genes list of the specie we are interested in. 
+An example of this file for mm10 is located in the metadata folder.
+- the numbers of replicates and chromosomes you want to use to train the model
 
 scGenotype will output the following files:
 - one dataframe containing for all the replicates per sample (columns), and for all genes (rows), 0 or 1 which indicates the genotype state. In the example reported here: 0 = mixed genotype, 1 = not mixed genotype (*_allreps.csv)
