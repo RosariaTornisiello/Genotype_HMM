@@ -3,7 +3,7 @@ requires = ["hatchling >= 1.26"]
 build-backend = "hatchling.build"
 
 [project]
-name = "scGenotype"
+name = "scGeno"
 version = "0.1.0"
 description = "Single-cell genotyping using Hidden Markov Model"
 authors = [
