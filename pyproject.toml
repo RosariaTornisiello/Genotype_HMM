@@ -32,10 +32,10 @@ dependencies = [
 Repository = "https://github.com/RosariaTornisiello/Genotype_HMM"
 
 [project.scripts]
-scgenotype = "scgenotype.main:main"
+scgeno = "scgeno.main:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/scgenotype"]
+packages = ["src/scgeno"]
 
 [tool.hatch.build.targets.sdist]
 include = [
