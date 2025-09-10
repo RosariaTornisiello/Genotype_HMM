@@ -207,6 +207,7 @@ def hmm_train(rep_chr_ratio_dict, chromosomes, r, c):
     fit_chromosomes = sample(chromosomes, c)
 
     X = list()
+    lengths = list()
     for i in fit_reps:
         print(f"Preprocessing {i} sequences for HMM training...")
         for chr in fit_chromosomes:
@@ -218,15 +219,12 @@ def hmm_train(rep_chr_ratio_dict, chromosomes, r, c):
             df = ratio2int(df)
             
             X_train = df.obs_state_pro.to_numpy()
+            lengths.append(X_train.shape[0])
 
             X_train = X_train.reshape(-1, 1)
             X_train = X_train.astype(int)
 
             X.append(X_train)
-
-    lengths = list()
-    for sequence in X:
-        lengths.append(len(sequence))
 
     X = np.concatenate(X)
 
