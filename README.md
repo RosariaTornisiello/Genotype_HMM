@@ -1,6 +1,6 @@
 # scGeno - A Hidden Markov Model to denoise mouse genotype using Single-Cell RNA-seq data
 <div align="center">
-  <img src="./images/Figure1.svg" alt="High quality figure" width="70%">
+  <img src="./images/Figure1_v1.svg" alt="High quality figure" width="70%">
 </div>
 
 ### What does scGeno do?
