@@ -1,5 +1,15 @@
 import argparse
-
+import csv
+import scanpy as sc
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from tqdm import tqdm
+from random import sample
+from hmmlearn.hmm import CategoricalHMM
+from natsort import natsorted
+from functools import reduce
 
 def get_chr_list():
 
@@ -335,17 +345,6 @@ def hmm_decode(model, rep_chr_ratio_dict, chromosomes, sample_name, simple_gtf_p
 
 
 def main():
-    import scanpy as sc
-    import pandas as pd
-    import numpy as np
-    import csv
-    import seaborn as sns
-    import matplotlib.pyplot as plt
-    from tqdm import tqdm
-    from random import sample
-    from hmmlearn.hmm import CategoricalHMM
-    from natsort import natsorted
-    from functools import reduce
 
     sns.set_style("white")
     sc.settings.verbosity = 3
