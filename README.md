@@ -71,11 +71,11 @@ gzip sample1_G2/*.fastq
 
 We can now install scGeno via pip:
 ```
-pip install scGeno
+pip install scgeno
 ```
 After installation we can look at the help page and learn about input and output files:
 ```
-scGeno --help
+scgeno --help
 ```
 Now we can run scGeno!
 These are the inputs the program needs:
@@ -97,7 +97,7 @@ An example of this file for mm10 is located in the metadata folder.
 
 Example run:
 ```
-scGeno -s WT_mm10 -gtf mm10.simple.gtf -imp mm10_imprinted_genes.csv -rep embryo -a WT_aggr.h5 -G1 WT_G1.h5ad -G2 WT_G2.h5ad -r 8 -c 9 -o out_path 
+scgeno -s WT_mm10 -gtf mm10.simple.gtf -imp mm10_imprinted_genes.csv -rep embryo -a WT_aggr.h5 -G1 WT_G1.h5ad -G2 WT_G2.h5ad -r 8 -c 9 -o out_path 
 ```
 
 scGeno will output the following files:
