@@ -33,3 +33,5 @@ example_in/wt75_aggr_matrix.h5ad
 example_in/wt75_aggr_matrix.h5ad.7z
 dist/scgeno-0.1.4-py3-none-any.whl
 dist/scgeno-0.1.4.tar.gz
+dist/scgeno-0.1.5-py3-none-any.whl
+dist/scgeno-0.1.5.tar.gz
