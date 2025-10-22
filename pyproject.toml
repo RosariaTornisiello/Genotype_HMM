@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "scgeno"
-version = "0.1.4"
+version = "0.1.5"
 description = "Single-cell genotyping using Hidden Markov Model"
 authors = [
     {name = "Rosaria Tornisiello", email = "rosaria.tornisiello@hpi.de"},
