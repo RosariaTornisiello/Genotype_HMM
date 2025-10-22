@@ -79,7 +79,7 @@ scgeno --help
 ```
 Now we can run scGeno!
 These are the inputs the program needs:
-- aggregated feature barcode matrix, already filtered after standard scRNA-seq QC
+- aggregated feature barcode matrix, already filtered after standard scRNA-seq QC (find an example [here] (https://nc.molgen.mpg.de/cloud/index.php/s/HPnZAFETkFLGqnr))
 - G1 feature barcode matrix
 - G2 feature barcode matrix
 - simplified gtf (csv) file of the specie we are interestes in, e.g.:
@@ -100,10 +100,37 @@ Example run:
 scgeno -s WT_mm10 -gtf mm10.simple.gtf -imp mm10_imprinted_genes.csv -rep embryo -a WT_aggr.h5 -G1 WT_G1.h5ad -G2 WT_G2.h5ad -r 8 -c 9 -o out_path 
 ```
 
+### scGeno output
 scGeno will output the following files:
 - one dataframe containing for all the replicates per sample (columns), and for all genes (rows), 0 or 1 which indicates the genotype state. In the example reported here: 0 = mixed genotype, 1 = not mixed genotype (*_allreps.csv)
+```
+gene	rep1 rep2 rep3 rep4 rep5 rep6 rep7 rep8 rep9 rep10
+Aagab	1.0	0.0	0.0	1.0	1.0	0.0	1.0	1.0	0.0	1.0	1.0
+Aak1	1.0	1.0	0.0	1.0	1.0	1.0	1.0	1.0	0.0	1.0	0.0
+Aamdc	1.0	1.0	1.0	1.0	1.0	0.0	0.0	0.0	0.0	1.0	1.0
+Aamp	1.0	1.0	0.0	0.0	1.0	0.0	0.0	0.0	0.0	0.0	0.0
+...
+```
 - one dataframe per replicate having these columns:
 ```
 chr	gene	ratio	observed_state	hidden_state
+chr1	Mrpl15	0.9852941176470589	5.0	1
+chr1	Lypla1	1.0	5.0	1
+chr1	Atp6v1h	0.9920634920634921	5.0	1
+chr1	Rb1cc1	0.9565217391304348	5.0	1
+...
 ```
 - one bed file per replicate indicating the chromosomal segments having a continuous genotype state
+```
+chr	hidden_state	start	end
+chr1	0	74279840	195131586
+chr1	1	4773206	72874884
+chr2	0	3284212	181870830
+chr3	0	5560188	159938664
+chr4	0	65604986	99987294
+...
+```
+- two pdf files per replicate containing chromosome genotype maps represented as heatmaps, as shown in the figure above (c).
+
+### Validation and Application
+See model evaluation and application vignettes in the vignette folder.
