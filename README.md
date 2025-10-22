@@ -79,7 +79,7 @@ scgeno --help
 ```
 Now we can run scGeno!
 These are the inputs the program needs:
-- aggregated feature barcode matrix, already filtered after standard scRNA-seq QC (find an example [here] (https://nc.molgen.mpg.de/cloud/index.php/s/HPnZAFETkFLGqnr))
+- aggregated feature barcode matrix, already filtered after standard scRNA-seq QC. Find an example [here] (https://nc.molgen.mpg.de/cloud/index.php/s/HPnZAFETkFLGqnr)
 - G1 feature barcode matrix
 - G2 feature barcode matrix
 - simplified gtf (csv) file of the specie we are interestes in, e.g.:
