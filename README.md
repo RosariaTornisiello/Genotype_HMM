@@ -42,8 +42,8 @@ perl SNPsplit --snp_file SNPsplit/SNPsplit_v0.3.2/all_SNPs_CAST_EiJ_GRCm38.txt.g
 
 - Extract read IDs for genome1 (e.g. B6) or genome2 (e.g. CAST)
 ```
-grep -w G1 sample1_unambiguous.bed | cut -f4 >sample1_G1.txt
-grep -w G2 sample1_unambiguous.bed | cut -f4 >sample1_G2.txt
+grep -w G1 sample1_unambiguous.bed | cut -f4 > sample1_G1.txt
+grep -w G2 sample1_unambiguous.bed | cut -f4 > sample1_G2.txt
 ```
 - Make folder
 ```
@@ -52,16 +52,16 @@ mkdir sample1_G2
 ```
 - Filter fastq I1/R1/R2/ for G1/G2
 ```
-## sample_G1
-seqkit grep --pattern-file sample1_G1.txt sample1_I1_001.fastq.gz >sample1_G1/sample1_G1_I1_001.fastq
-seqkit grep --pattern-file sample1_G1.txt sample1_R1_001.fastq.gz >sample1_G1/sample1_G1_R1_001.fastq
-seqkit grep --pattern-file sample1_G1.txt sample1_R2_001.fastq.gz >sample1_G1/sample1_G1_R2_001.fastq
+## sample1_G1
+seqkit grep --pattern-file sample1_G1.txt sample1_I1_001.fastq.gz > sample1_G1/sample1_G1_I1_001.fastq
+seqkit grep --pattern-file sample1_G1.txt sample1_R1_001.fastq.gz > sample1_G1/sample1_G1_R1_001.fastq
+seqkit grep --pattern-file sample1_G1.txt sample1_R2_001.fastq.gz > sample1_G1/sample1_G1_R2_001.fastq
 gzip sample1_G1/*.fastq
 
 ## sample1_G2
-seqkit grep --pattern-file sample1_G2.txt sample1_I1_001.fastq.gz >WT65_G2/WT65_G2_I1_001.fastq
-seqkit grep --pattern-file sample1_G2.txt sample1_R1_001.fastq.gz >WT65_G2/WT65_G2_R1_001.fastq
-seqkit grep --pattern-file sample1_G2.txt sample1_R2_001.fastq.gz >WT65_G2/WT65_G2_R2_001.fastq
+seqkit grep --pattern-file sample1_G2.txt sample1_I1_001.fastq.gz > sample1_G2/sample1_G2_I1_001.fastq
+seqkit grep --pattern-file sample1_G2.txt sample1_R1_001.fastq.gz > sample1_G2/sample1_G2_R1_001.fastq
+seqkit grep --pattern-file sample1_G2.txt sample1_R2_001.fastq.gz > sample1_G2/sample1_G2_R2_001.fastq
 gzip sample1_G2/*.fastq
 ```
 
