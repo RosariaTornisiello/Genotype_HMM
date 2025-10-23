@@ -11,9 +11,9 @@ scGeno requires preprocessing of the single-cell data:
 
 - Use SNPsplit to obtain unambiguously assignable reads for both genomes
 ```
-SAMPLE=${1}         #/project/scRNA/processing/Exp
-BC=${2}             #../outs/raw_gene_bc_matrices/mm10/barcodes.tsv(.gz)
-R1=${3}             #"..._R1_001.fastq.gz ..._R1_001.fastq.gz ..._R1_001.fastq.gz"
+SAMPLE=${1}
+BC=${2}
+R1=${3}
 
 R2=`echo ${R1} | sed 's/R1/R2/g'`
 
